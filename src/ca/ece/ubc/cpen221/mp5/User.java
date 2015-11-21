@@ -12,7 +12,20 @@ public class User {
     private String userID;
     private String name;
     private double averageStars;
-
+    
+    /**
+     * Constructor
+     * 
+     * @param url
+     * @param funnyVotes
+     * @param usefulVotes
+     * @param coolVotes
+     * @param reviewCount
+     * @param type
+     * @param userID
+     * @param name
+     * @param averageStars
+     */
     public User(String url,
             int funnyVotes, 
             int usefulVotes, 

@@ -14,7 +14,20 @@ public class Review {
     private String userID;
     private String date;
     
-
+    /**
+     * Constructor
+     * 
+     * @param type
+     * @param businessID
+     * @param coolVote
+     * @param usefulVote
+     * @param funnyVote
+     * @param reviewID
+     * @param reviewText
+     * @param stars
+     * @param userID
+     * @param date
+     */
     public Review(
             String type,
             String businessID,

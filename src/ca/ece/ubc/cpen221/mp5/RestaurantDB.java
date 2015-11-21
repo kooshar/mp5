@@ -15,9 +15,9 @@ import org.json.simple.parser.JSONParser;
 // state the rep invariant and the abstraction function.
 
 public class RestaurantDB {
-
-    private static ArrayList<User> Users = new ArrayList<>();
-    private static ArrayList<Review> Reviews = new ArrayList<>();
+    private static ArrayList<Restaurant> restaurants=new ArrayList<>();
+    private static ArrayList<User> users = new ArrayList<>();
+    private static ArrayList<Review> reviews = new ArrayList<>();
 
     public static void main(String args[]){
         RestaurantDBs("","data/reviews.json","data/users.json");
@@ -43,13 +43,13 @@ public class RestaurantDB {
     public static void RestaurantDBs(String restaurantJSONfilename, String reviewsJSONfilename, String usersJSONfilename) {
         // TODO: Implement this method
         
+        //Read the Users data
         JSONParser userParser = new JSONParser();
         try {
-            BufferedReader reviewBuffer = new BufferedReader(new FileReader(usersJSONfilename));
+            BufferedReader usersBuffer = new BufferedReader(new FileReader(usersJSONfilename));
             String line;
 
-            while ((line = reviewBuffer.readLine()) != null) {
-                
+            while ((line = usersBuffer.readLine()) != null) {
                 Object obj = userParser.parse(line);
                 JSONObject jsonObject = (JSONObject) obj;
                 JSONObject vote= (JSONObject) jsonObject.get("votes");
@@ -66,19 +66,20 @@ public class RestaurantDB {
                         (Double) jsonObject.get("average_stars")
                         );
                 
-                Users.add(nextUser);
+                users.add(nextUser);
             }
+            usersBuffer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         
+        //Read the Review data
         JSONParser reviewParser = new JSONParser();
         try {
-            BufferedReader reviewBuffer = new BufferedReader(new FileReader(reviewsJSONfilename));
+            BufferedReader reviewsBuffer = new BufferedReader(new FileReader(reviewsJSONfilename));
             String line;
 
-            while ((line = reviewBuffer.readLine()) != null) {
-                
+            while ((line = reviewsBuffer.readLine()) != null) {
                 Object obj = reviewParser.parse(line);
                 JSONObject jsonObject = (JSONObject) obj;
                 JSONObject vote= (JSONObject) jsonObject.get("votes");
@@ -96,8 +97,9 @@ public class RestaurantDB {
                         (String) jsonObject.get("date")
                         );
                 
-                Reviews.add(nextReview);
+                reviews.add(nextReview);
             }
+            reviewsBuffer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
