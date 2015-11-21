@@ -39,7 +39,6 @@ public class RestaurantDB {
      * @param usersJSONfilename
      *            the filename for the users
      */
-    @SuppressWarnings("unchecked")
     public static void RestaurantDBs(String restaurantJSONfilename, String reviewsJSONfilename, String usersJSONfilename) {
         // TODO: Implement this method
         
@@ -110,5 +109,98 @@ public class RestaurantDB {
         // Write specs, etc.
         return null;
     }
+    
+    /**
+     * Returns a random review for a given restaurant name.
+     * Returns "NO REVIEWS FOUND!" if no reviews were available for the 
+     * restaurant or if the restaurant doesn't exist.
+     * 
+     * @param String restaurantName
+     */
+    @SuppressWarnings({ "unchecked" })
+    public String randomReview(String restaurantName){
+        String businessID="";
+        ArrayList<Review> restaurantReviews=new ArrayList<>();
+                
+        for(Restaurant restaurantFinder: restaurants){
+            if(restaurantFinder.getname().equals(restaurantName)){
+                businessID=restaurantFinder.getBusinessID();
+                break;
+            }
+        }
+        
+        for(Review reviewFinder:reviews){
+            if (reviewFinder.getBusinessID().equals(businessID)){
+                restaurantReviews.add(reviewFinder);
+            }
+        }
+        
+        if(restaurantReviews.size()!=0){
+            Review randomReview=restaurantReviews.get((int) Math.random()*restaurantReviews.size());  
+            return randomReview.getJSONString();
+        }else{
+            return "NO REVIEWS FOUND!";
+        }
+    }
 
+    /**
+     * Adds a user to the data set.
+     * 
+     * @param JSONUser user information in JSON format
+     */
+    public void addUser(String JSONUser){
+        JSONParser userParser = new JSONParser();
+        try{
+            Object obj = userParser.parse(JSONUser);
+            JSONObject jsonObject = (JSONObject) obj;
+            JSONObject vote= (JSONObject) jsonObject.get("votes");
+                            
+            User newUser=new User(
+                    (String) jsonObject.get("url"),
+                    ((Long) vote.get("cool")).intValue(),
+                    ((Long) vote.get("useful")).intValue(),
+                    ((Long) vote.get("funny")).intValue(),
+                    ((Long) jsonObject.get("review_count")).intValue(),
+                    (String) jsonObject.get("type"),
+                    (String) jsonObject.get("user_id"),
+                    (String) jsonObject.get("name"),
+                    (Double) jsonObject.get("average_stars")
+                    );
+            
+            users.add(newUser);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Adds a review to the data set.
+     * 
+     * @param JSONReview user information in JSON format
+     */
+    public void addReview(String JSONReview){
+        JSONParser reviewParser = new JSONParser();
+        try{
+            Object obj = reviewParser.parse(JSONReview);
+            JSONObject jsonObject = (JSONObject) obj;
+            JSONObject vote= (JSONObject) jsonObject.get("votes");
+                            
+            Review newReview=new Review(
+                    (String) jsonObject.get("type"),
+                    (String) jsonObject.get("business_id"),
+                    ((Long) vote.get("cool")).intValue(),
+                    ((Long) vote.get("useful")).intValue(),
+                    ((Long) vote.get("funny")).intValue(),
+                    (String) jsonObject.get("review_id"),
+                    (String) jsonObject.get("text"),
+                    ((Long) jsonObject.get("stars")).intValue(),
+                    (String) jsonObject.get("user_id"),
+                    (String) jsonObject.get("date")
+                    );
+            
+            reviews.add(newReview);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package ca.ece.ubc.cpen221.mp5;
 
-// TODO: Use this class to represent a Yelp user.
+import org.json.simple.JSONObject;
 
 public class User {
     private String url;
@@ -108,6 +108,26 @@ public class User {
      */
     public String getName() {
         return name;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public String getJSONString(){
+       JSONObject user=new JSONObject();
+       
+       JSONObject vote=new JSONObject();
+       vote.put("cool",coolVotes);
+       vote.put("useful", usefulVotes);
+       vote.put("funny", funnyVotes);
+       
+       user.put("url", url);
+       user.put("vote", vote);
+       user.put("review_count", reviewCount);
+       user.put("type", type);
+       user.put("user_id", userID);
+       user.put("name", name);
+       user.put("average_stars", averageStars);
+       
+        return user.toJSONString();
     }
 
 }

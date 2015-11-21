@@ -1,13 +1,13 @@
 package ca.ece.ubc.cpen221.mp5;
 
-// TODO: Use this class to represent a Yelp review.
+import org.json.simple.JSONObject;
 
 public class Review {
     private String type;
     private String businessID;
-    private int coolVote;
-    private int usefulVote;
-    private int funnyVote;
+    private int coolVotes;
+    private int usefulVotes;
+    private int funnyVotes;
     private String reviewID;
     private String reviewText;
     private int stars;
@@ -31,9 +31,9 @@ public class Review {
     public Review(
             String type,
             String businessID,
-            int coolVote, 
-            int usefulVote, 
-            int funnyVote,
+            int coolVotes, 
+            int usefulVotes, 
+            int funnyVotes,
             String reviewID, 
             String reviewText, 
             int stars, 
@@ -48,9 +48,9 @@ public class Review {
         this.stars = stars;
         this.userID = userID;
         this.date = date;
-        this.coolVote = coolVote;
-        this.usefulVote = usefulVote;
-        this.funnyVote = funnyVote;
+        this.coolVotes = coolVotes;
+        this.usefulVotes = usefulVotes;
+        this.funnyVotes = funnyVotes;
     }
     /**
      * 
@@ -114,8 +114,8 @@ public class Review {
      * 
      * @return the number of coolVotes
      */
-    public int getCoolVote() {
-        return coolVote;
+    public int getCoolVotes() {
+        return coolVotes;
 
     }
 
@@ -123,8 +123,8 @@ public class Review {
      * 
      * @return the number of usefulVotes
      */
-    public int getUsefulVote() {
-        return usefulVote;
+    public int getUsefulVotes() {
+        return usefulVotes;
 
     }
 
@@ -132,7 +132,26 @@ public class Review {
      * 
      * @return the number of funnyVotes
      */
-    public int getFunnyVote() {
-        return funnyVote;
+    public int getFunnyVotes() {
+        return funnyVotes;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public String getJSONString(){
+        JSONObject review= new JSONObject();
+        
+        JSONObject vote=new JSONObject();
+        vote.put("cool",coolVotes);
+        vote.put("useful", usefulVotes);
+        vote.put("funny", funnyVotes);
+        
+        review.put("vote", vote);
+        review.put("review_id", reviewID);
+        review.put("text", reviewText);
+        review.put("stars", stars);
+        review.put("user_id", userID);
+        review.put("date", date);
+        
+        return review.toJSONString();
     }
 }
