@@ -6,6 +6,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,7 +27,9 @@ public class RestaurantDB {
 
     public static void main(String args[]){
         RestaurantDBs("","data/reviews.json","data/users.json");
+        Set<Restaurant> a=query("(price(1..2)&&price(1..3)) || (rating(1..5))|| name(\"Koojjjgh\")");
     }
+    
     /**
      * Create a database from the Yelp dataset given the names of three files:
      * <ul>
@@ -104,9 +112,22 @@ public class RestaurantDB {
         }
     }
 
-    public Set<Restaurant> query(String queryString) {
+    public static Set<Restaurant> query(String queryString) {
         // TODO: Implement this method
         // Write specs, etc.
+        
+        CharStream stream = new ANTLRInputStream(queryString);
+        QueryLexer lexer = new QueryLexer(stream);
+        lexer.reportErrorsAsExceptions();
+        TokenStream tokens = new CommonTokenStream(lexer);
+        
+        // Feed the tokens into the parser.
+        QueryParser parser = new QueryParser(tokens);
+        parser.reportErrorsAsExceptions();
+        
+        // Generate the parse tree using the starter rule.
+        ParseTree tree = parser.orExpr();
+        ((RuleContext)tree).inspect(parser);
         return null;
     }
     
