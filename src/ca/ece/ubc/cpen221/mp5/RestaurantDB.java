@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Stack;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -12,6 +13,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -27,7 +29,8 @@ public class RestaurantDB {
 
     public static void main(String args[]){
         RestaurantDBs("","data/reviews.json","data/users.json");
-        Set<Restaurant> a=query("(price(1..2)&&price(1..3)) || (rating(1..5))|| name(\"Koojjjgh\")");
+        Set<Restaurant> a=query("price(1..2)&&price(1..3) || (rating(1..5))"
+                + "|| name(\"Koojjjgh\")");
     }
     
     /**
@@ -47,13 +50,18 @@ public class RestaurantDB {
      * @param usersJSONfilename
      *            the filename for the users
      */
-    public static void RestaurantDBs(String restaurantJSONfilename, String reviewsJSONfilename, String usersJSONfilename) {
+    public static void RestaurantDBs(
+            String restaurantJSONfilename, 
+            String reviewsJSONfilename,
+            String usersJSONfilename)
+    {
         // TODO: Implement this method
         
         //Read the Users data
         JSONParser userParser = new JSONParser();
         try {
-            BufferedReader usersBuffer = new BufferedReader(new FileReader(usersJSONfilename));
+            BufferedReader usersBuffer = new BufferedReader(
+                    new FileReader(usersJSONfilename));
             String line;
 
             while ((line = usersBuffer.readLine()) != null) {
@@ -83,7 +91,8 @@ public class RestaurantDB {
         //Read the Review data
         JSONParser reviewParser = new JSONParser();
         try {
-            BufferedReader reviewsBuffer = new BufferedReader(new FileReader(reviewsJSONfilename));
+            BufferedReader reviewsBuffer = new BufferedReader(
+                    new FileReader(reviewsJSONfilename));
             String line;
 
             while ((line = reviewsBuffer.readLine()) != null) {
@@ -111,7 +120,12 @@ public class RestaurantDB {
             e.printStackTrace();
         }
     }
-
+    
+    /**
+     * 
+     * @param queryString
+     * @return
+     */
     public static Set<Restaurant> query(String queryString) {
         // TODO: Implement this method
         // Write specs, etc.
@@ -128,8 +142,19 @@ public class RestaurantDB {
         // Generate the parse tree using the starter rule.
         ParseTree tree = parser.orExpr();
         ((RuleContext)tree).inspect(parser);
+        
+        // Finally, construct a Document value by walking over the parse tree.
+        ParseTreeWalker walker = new ParseTreeWalker();
+        QueryListener_QueryFinder listener = new QueryListener_QueryFinder();
+        walker.walk(listener, tree);
+        
         return null;
     }
+    
+    private static class QueryListener_QueryFinder extends QueryBaseListener {
+        
+    }
+       
     
     /**
      * Returns a random review for a given restaurant name.
@@ -157,7 +182,8 @@ public class RestaurantDB {
         }
         
         if(restaurantReviews.size()!=0){
-            Review randomReview=restaurantReviews.get((int) Math.random()*restaurantReviews.size());  
+            Review randomReview=restaurantReviews.get(
+                    (int) Math.random()*restaurantReviews.size());  
             return randomReview.getJSONString();
         }else{
             return "NO REVIEWS FOUND!";
@@ -175,20 +201,32 @@ public class RestaurantDB {
             Object obj = userParser.parse(JSONUser);
             JSONObject jsonObject = (JSONObject) obj;
             JSONObject vote= (JSONObject) jsonObject.get("votes");
-                            
-            User newUser=new User(
-                    (String) jsonObject.get("url"),
-                    ((Long) vote.get("cool")).intValue(),
-                    ((Long) vote.get("useful")).intValue(),
-                    ((Long) vote.get("funny")).intValue(),
-                    ((Long) jsonObject.get("review_count")).intValue(),
-                    (String) jsonObject.get("type"),
-                    (String) jsonObject.get("user_id"),
-                    (String) jsonObject.get("name"),
-                    (Double) jsonObject.get("average_stars")
-                    );
+             
+          //check if the user id exists
+            boolean userIDExist=false;
+            for(User user:users){
+                if(user.getUserID().equals((String) jsonObject.get("user_id"))){
+                    userIDExist=true;
+                    break;
+                }
+            }
             
-            users.add(newUser);
+            //adds the user if the use id doesn't already exist
+            if(!userIDExist){
+                User newUser=new User(
+                        (String) jsonObject.get("url"),
+                        ((Long) vote.get("cool")).intValue(),
+                        ((Long) vote.get("useful")).intValue(),
+                        ((Long) vote.get("funny")).intValue(),
+                        ((Long) jsonObject.get("review_count")).intValue(),
+                        (String) jsonObject.get("type"),
+                        (String) jsonObject.get("user_id"),
+                        (String) jsonObject.get("name"),
+                        (Double) jsonObject.get("average_stars")
+                        );
+                
+                users.add(newUser);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -205,21 +243,33 @@ public class RestaurantDB {
             Object obj = reviewParser.parse(JSONReview);
             JSONObject jsonObject = (JSONObject) obj;
             JSONObject vote= (JSONObject) jsonObject.get("votes");
-                            
-            Review newReview=new Review(
-                    (String) jsonObject.get("type"),
-                    (String) jsonObject.get("business_id"),
-                    ((Long) vote.get("cool")).intValue(),
-                    ((Long) vote.get("useful")).intValue(),
-                    ((Long) vote.get("funny")).intValue(),
-                    (String) jsonObject.get("review_id"),
-                    (String) jsonObject.get("text"),
-                    ((Long) jsonObject.get("stars")).intValue(),
-                    (String) jsonObject.get("user_id"),
-                    (String) jsonObject.get("date")
-                    );
             
-            reviews.add(newReview);
+            //check if the review id exists
+            boolean reviewIDExist=false;
+            for(Review review:reviews){
+                if(review.getReviewID().equals((String) jsonObject.get("review_id"))){
+                    reviewIDExist=true;
+                    break;
+                }
+            }
+            
+            //adds the review if the review id doesn't already exist
+            if(!reviewIDExist){
+                Review newReview=new Review(
+                        (String) jsonObject.get("type"),
+                        (String) jsonObject.get("business_id"),
+                        ((Long) vote.get("cool")).intValue(),
+                        ((Long) vote.get("useful")).intValue(),
+                        ((Long) vote.get("funny")).intValue(),
+                        (String) jsonObject.get("review_id"),
+                        (String) jsonObject.get("text"),
+                        ((Long) jsonObject.get("stars")).intValue(),
+                        (String) jsonObject.get("user_id"),
+                        (String) jsonObject.get("date")
+                        );
+                
+                reviews.add(newReview);
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }

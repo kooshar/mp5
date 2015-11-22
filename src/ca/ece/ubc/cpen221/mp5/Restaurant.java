@@ -4,5 +4,5 @@ package ca.ece.ubc.cpen221.mp5;
 // State the rep invariant and abs
 
 public class Restaurant {
-
+   
 }
