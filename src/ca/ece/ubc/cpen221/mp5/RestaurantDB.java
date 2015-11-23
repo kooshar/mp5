@@ -28,7 +28,7 @@ public class RestaurantDB {
     private static ArrayList<Review> reviews = new ArrayList<>();
 
     public static void main(String args[]){
-        RestaurantDBs("","data/reviews.json","data/users.json");
+        RestaurantDBs("data/restaurants.json","data/reviews.json","data/users.json");
         Set<Restaurant> a=query("price(1..2)&&price(1..3) || (rating(1..5))"
                 + "|| name(\"Koojjjgh\")");
     }
@@ -55,7 +55,49 @@ public class RestaurantDB {
             String reviewsJSONfilename,
             String usersJSONfilename)
     {
-        // TODO: Implement this method
+        // Read the Restaurant data
+        JSONParser restaurantParser = new JSONParser();
+        try{
+            BufferedReader restaurantReader = new BufferedReader(new FileReader(restaurantJSONfilename));
+            String line;
+            while ((line = restaurantReader.readLine()) != null) {
+                Object obj = restaurantParser.parse(line);
+                JSONObject jsonObject = (JSONObject) obj;
+
+                boolean isopen = (Boolean) jsonObject.get("open");
+                String name = (String) jsonObject.get("name");
+                String city = (String) jsonObject.get("city");
+                JSONArray categories = (JSONArray) jsonObject.get("categories");
+
+                String url = (String) jsonObject.get("url");
+
+                double longitude = (Double) jsonObject.get("longitude");
+                double latitude = (Double) jsonObject.get("latitude");
+                JSONArray neighborhoods = (JSONArray) jsonObject.get("neighborhoods");
+                String business_id = (String) jsonObject.get("business_id");
+                String state = (String) jsonObject.get("state");
+                String type = (String) jsonObject.get("type");
+                double stars = (Double) jsonObject.get("stars");
+                String full_address = (String) jsonObject.get("full_address");
+
+                Long review_count_long = (Long) jsonObject.get("review_count");
+                int review_count = review_count_long.intValue();
+
+                String photo_url = (String) jsonObject.get("photo_url");
+                JSONArray schools = (JSONArray) jsonObject.get("schools");
+
+                Long price_long = (Long) jsonObject.get("price");
+                int price = price_long.intValue();
+                
+                Restaurant newRestaurant = new Restaurant(isopen, url, longitude, latitude, neighborhoods, business_id, name,
+                        categories, state, type, stars, city, full_address, review_count, photo_url, schools, price);     
+                restaurants.add(newRestaurant);
+
+            }           
+            restaurantReader.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
         
         //Read the Users data
         JSONParser userParser = new JSONParser();
