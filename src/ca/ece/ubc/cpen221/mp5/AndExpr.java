@@ -3,7 +3,7 @@ package ca.ece.ubc.cpen221.mp5;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class AndExpr implements QueryExpresssion {
+public class AndExpr implements QueryExpression {
     ArrayList<Atom> atoms;
     
     public AndExpr(ArrayList<Atom> atoms){
@@ -53,7 +53,7 @@ public class AndExpr implements QueryExpresssion {
             boolean newRestaurantExist=false;
             
             for(Restaurant restaurant:leftSide){
-                if (newrestaurant.getBusinessID().equals(restaurant.getBusinessID())){
+                if (newrestaurant.getbusiness_id().equals(restaurant.getbusiness_id())){
                     newRestaurantExist=true;
                 }
             }

@@ -38,7 +38,8 @@ CATEGORY : 'category';
 PRICE : 'price';
 RPAREN : ')';
 LPAREN : '(';
-RANGE : [1-5]'..'[1-5];
+NUMBER : [1-5];
+TO : '..';
 STRING : '"' ([a-z]|[A-Z])* '"';
 
 /*
@@ -51,5 +52,8 @@ atom : in | category | rating | price | name | LPAREN orExpr RPAREN;
 in : IN LPAREN STRING RPAREN;
 category : CATEGORY LPAREN STRING RPAREN;
 name : NAME LPAREN STRING RPAREN;
-rating : RATING LPAREN RANGE RPAREN;
-price : PRICE LPAREN RANGE RPAREN;
+rating : RATING LPAREN range RPAREN;
+price : PRICE LPAREN range RPAREN;
+range: leftNum TO rightNum;
+leftNum : NUMBER;
+rightNum : NUMBER;

@@ -11,6 +11,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface QueryListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link QueryParser#leftNum}.
+	 * @param ctx the parse tree
+	 */
+	void enterLeftNum(@NotNull QueryParser.LeftNumContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QueryParser#leftNum}.
+	 * @param ctx the parse tree
+	 */
+	void exitLeftNum(@NotNull QueryParser.LeftNumContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link QueryParser#in}.
 	 * @param ctx the parse tree
 	 */
@@ -61,6 +71,16 @@ public interface QueryListener extends ParseTreeListener {
 	 */
 	void exitOrExpr(@NotNull QueryParser.OrExprContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link QueryParser#range}.
+	 * @param ctx the parse tree
+	 */
+	void enterRange(@NotNull QueryParser.RangeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QueryParser#range}.
+	 * @param ctx the parse tree
+	 */
+	void exitRange(@NotNull QueryParser.RangeContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link QueryParser#atom}.
 	 * @param ctx the parse tree
 	 */
@@ -80,6 +100,16 @@ public interface QueryListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCategory(@NotNull QueryParser.CategoryContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link QueryParser#rightNum}.
+	 * @param ctx the parse tree
+	 */
+	void enterRightNum(@NotNull QueryParser.RightNumContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link QueryParser#rightNum}.
+	 * @param ctx the parse tree
+	 */
+	void exitRightNum(@NotNull QueryParser.RightNumContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link QueryParser#andExpr}.
 	 * @param ctx the parse tree

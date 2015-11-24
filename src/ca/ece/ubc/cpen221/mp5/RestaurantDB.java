@@ -3,7 +3,6 @@ package ca.ece.ubc.cpen221.mp5;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.Stack;
 
@@ -12,11 +11,13 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
 
 // TODO: This class represents the Restaurant Database.
 // Define the internal representation and 
@@ -29,7 +30,7 @@ public class RestaurantDB {
 
     public static void main(String args[]){
         RestaurantDBs("data/restaurants.json","data/reviews.json","data/users.json");
-        Set<Restaurant> a=query("price(1..2)&&price(1..3) || (rating(1..5))"
+        query("price(1..2)&&price(1..3) || (rating(1..5))"
                 + "|| name(\"Koojjjgh\")");
     }
     
@@ -194,7 +195,77 @@ public class RestaurantDB {
     }
     
     private static class QueryListener_QueryFinder extends QueryBaseListener {
+        private Stack<QueryExpression> stack = new Stack<>();
         
+        @Override 
+        public void exitIn(@NotNull QueryParser.InContext ctx) { 
+            if(ctx.IN() != null){
+                stack.push(new InAtom(ctx.STRING().getText()));
+            }
+        }
+        
+        @Override 
+        public void exitPrice(@NotNull QueryParser.PriceContext ctx) {
+            if(ctx.PRICE() != null){
+                int leftRange= Integer.parseInt(ctx.range().leftNum().getText());
+                int rightRange= Integer.parseInt(ctx.range().rightNum().getText());
+                
+                stack.push(new PriceAtom(leftRange,rightRange));
+            }
+        }
+        
+        @Override 
+        public void exitRating(@NotNull QueryParser.RatingContext ctx) {
+            if(ctx.RATING() != null){
+                int leftRange= Integer.parseInt(ctx.range().leftNum().getText());
+                int rightRange= Integer.parseInt(ctx.range().rightNum().getText());
+                
+                stack.push(new RatingAtom(leftRange,rightRange));
+            }
+        }
+        
+        @Override 
+        public void exitName(@NotNull QueryParser.NameContext ctx) { 
+            if(ctx.NAME() != null){
+                stack.push(new NameAtom(ctx.STRING().getText()));
+            }
+        }
+               
+        @Override 
+        public void exitCategory(@NotNull QueryParser.CategoryContext ctx) {
+            if(ctx.CATEGORY() != null){
+                stack.push(new CategoryAtom(ctx.STRING().getText()) );
+            }
+        }
+
+        @Override 
+        public void exitOrExpr(@NotNull QueryParser.OrExprContext ctx) { 
+            if(ctx.OR() != null){
+                int size=ctx.OR().size()+1;
+                
+                ArrayList<AndExpr> andExpressions=new ArrayList<>();
+                for(int i=0;i<size;i++){
+                    andExpressions.add((AndExpr)stack.pop());
+                }
+                
+                stack.push(new OrExpr(andExpressions));
+            }
+        }
+        
+        @Override 
+        public void exitAndExpr(@NotNull QueryParser.AndExprContext ctx) { 
+            if(ctx.AND() != null){
+                int size=ctx.AND().size()+1;
+                
+                ArrayList<Atom> atoms=new ArrayList<>();
+                for(int i=0;i<size;i++){
+                    QueryExpression a= stack.pop();
+                    atoms.add((Atom) a);
+                }
+                
+                stack.push(new AndExpr(atoms));
+            }
+        }
     }
        
     
@@ -205,14 +276,14 @@ public class RestaurantDB {
      * 
      * @param String restaurantName
      */
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({ })
     public String randomReview(String restaurantName){
         String businessID="";
         ArrayList<Review> restaurantReviews=new ArrayList<>();
                 
         for(Restaurant restaurantFinder: restaurants){
             if(restaurantFinder.getname().equals(restaurantName)){
-                businessID=restaurantFinder.getBusinessID();
+                businessID=restaurantFinder.getbusiness_id();
                 break;
             }
         }
@@ -316,4 +387,72 @@ public class RestaurantDB {
             e.printStackTrace();
         }
     }
+    
+    private static class NameAtom extends Atom {
+
+        public NameAtom(String text) {
+            // TODO Auto-generated constructor stub
+        }
+
+        @Override
+        public ArrayList<Restaurant> search() {
+            return null;
+        }
+        
+    }
+    
+    private static class CategoryAtom extends Atom {
+        private String category;
+        
+        public CategoryAtom(String category) {
+            this.category=category;
+        }
+        //TODO:
+        @Override
+        public ArrayList<Restaurant> search() {
+            return null;
+        }
+        
+    }
+    
+    private static class InAtom extends Atom {
+
+        public InAtom(String text) {
+            // TODO Auto-generated constructor stub
+        }
+
+        @Override
+        public ArrayList<Restaurant> search() {
+            return null;
+        }
+
+    }
+    
+    private static class PriceAtom extends Atom {
+        
+        public PriceAtom(int leftRange, int rightRange) {
+            // TODO Auto-generated constructor stub
+        }
+
+
+        @Override
+        public ArrayList<Restaurant> search() {
+            return null;
+        }
+        
+    }
+    
+    private static class RatingAtom extends Atom {
+
+        public RatingAtom(int leftRange, int rightRange) {
+            // TODO Auto-generated constructor stub
+        }
+
+        @Override
+        public ArrayList<Restaurant> search() {
+            return null;
+        }
+        
+    }
+
 }
