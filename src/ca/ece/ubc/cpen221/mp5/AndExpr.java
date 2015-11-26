@@ -23,7 +23,7 @@ public class AndExpr implements QueryExpression {
         
         while(!searchResult.isEmpty()){
             leftSide=searchResult.pop();
-            if(!searchResult.isEmpty()){
+            if(searchResult.isEmpty()){
                 break;
             }else{
                 rightSide=searchResult.pop();

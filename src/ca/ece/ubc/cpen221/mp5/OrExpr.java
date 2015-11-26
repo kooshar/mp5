@@ -24,7 +24,7 @@ public class OrExpr extends Atom implements QueryExpression {
         
         while(!searchResult.isEmpty()){
             leftSide=searchResult.pop();
-            if(!searchResult.isEmpty()){
+            if(searchResult.isEmpty()){
                 break;
             }else{
                 rightSide=searchResult.pop();

@@ -40,7 +40,7 @@ RPAREN : ')';
 LPAREN : '(';
 NUMBER : [1-5];
 TO : '..';
-STRING : '"' ([a-z]|[A-Z])* '"';
+STRING : '"' ([\u0020-\u007E])* '"';
 
 /*
  * These are the parser rules. They define the structures used by the parser.
