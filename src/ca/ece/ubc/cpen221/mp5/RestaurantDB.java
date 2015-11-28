@@ -1,5 +1,7 @@
 package ca.ece.ubc.cpen221.mp5;
 
+import java.util.*;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 // TODO: This class represents the Restaurant Database.
 // Define the internal representation and 
@@ -102,15 +105,10 @@ public class RestaurantDB {
                 JSONObject jsonObject = (JSONObject) obj;
                 JSONObject vote = (JSONObject) jsonObject.get("votes");
 
-                User nextUser = new User(
-                        (String) jsonObject.get("url"),
-                        ((Long) vote.get("cool")).intValue(),
-                        ((Long) vote.get("useful")).intValue(), 
-                        ((Long) vote.get("funny")).intValue(),
-                        ((Long) jsonObject.get("review_count")).intValue(), 
-                        (String) jsonObject.get("type"),
-                        (String) jsonObject.get("user_id"),
-                        (String) jsonObject.get("name"),
+                User nextUser = new User((String) jsonObject.get("url"), ((Long) vote.get("cool")).intValue(),
+                        ((Long) vote.get("useful")).intValue(), ((Long) vote.get("funny")).intValue(),
+                        ((Long) jsonObject.get("review_count")).intValue(), (String) jsonObject.get("type"),
+                        (String) jsonObject.get("user_id"), (String) jsonObject.get("name"),
                         (Double) jsonObject.get("average_stars"));
 
                 users.add(nextUser);
@@ -131,17 +129,11 @@ public class RestaurantDB {
                 JSONObject jsonObject = (JSONObject) obj;
                 JSONObject vote = (JSONObject) jsonObject.get("votes");
 
-                Review nextReview = new Review(
-                        (String) jsonObject.get("type"), 
-                        (String) jsonObject.get("business_id"),
-                        ((Long) vote.get("cool")).intValue(),
-                        ((Long) vote.get("useful")).intValue(),
-                        ((Long) vote.get("funny")).intValue(),
-                        (String) jsonObject.get("review_id"),
-                        (String) jsonObject.get("text"), 
-                        ((Long) jsonObject.get("stars")).intValue(),
-                        (String) jsonObject.get("user_id"), 
-                        (String) jsonObject.get("date"));
+                Review nextReview = new Review((String) jsonObject.get("type"), (String) jsonObject.get("business_id"),
+                        ((Long) vote.get("cool")).intValue(), ((Long) vote.get("useful")).intValue(),
+                        ((Long) vote.get("funny")).intValue(), (String) jsonObject.get("review_id"),
+                        (String) jsonObject.get("text"), ((Long) jsonObject.get("stars")).intValue(),
+                        (String) jsonObject.get("user_id"), (String) jsonObject.get("date"));
 
                 reviews.add(nextReview);
             }
@@ -184,7 +176,71 @@ public class RestaurantDB {
 
         return searchResult;
     }
-    
+
+    /**
+     * Finds the restaurant with given businessID returns "NO RESTAURANT FOUND!"
+     * if a restaurant with given businessID isn't found
+     * 
+     * @param String
+     *            businessId
+     * @return String name of restaurant, "NO RESTAURANT FOUND!" if restaurant
+     *         is not found
+     */
+    public String getRestaurant(String businessId) {
+
+        for (Restaurant restaurantFinder : restaurants) {
+            if (restaurantFinder.getbusiness_id() == businessId)
+                return restaurantFinder.getname();
+
+        }
+
+        return "NO RESTAURANT FOUND!";
+
+    }
+
+    public void addRestaurant(String JSONrestaurant) {
+        JSONParser addrestaurantParser = new JSONParser();
+        Object obj;
+        try {
+            obj = addrestaurantParser.parse(JSONrestaurant);
+
+            JSONObject jsonObject = (JSONObject) obj;
+
+            boolean isopen = (Boolean) jsonObject.get("open");
+            String name = (String) jsonObject.get("name");
+            String city = (String) jsonObject.get("city");
+            JSONArray categories = (JSONArray) jsonObject.get("categories");
+
+            String url = (String) jsonObject.get("url");
+
+            double longitude = (Double) jsonObject.get("longitude");
+            double latitude = (Double) jsonObject.get("latitude");
+            JSONArray neighborhoods = (JSONArray) jsonObject.get("neighborhoods");
+            String business_id = (String) jsonObject.get("business_id");
+            String state = (String) jsonObject.get("state");
+            String type = (String) jsonObject.get("type");
+            double stars = (Double) jsonObject.get("stars");
+            String full_address = (String) jsonObject.get("full_address");
+
+            Long review_count_long = (Long) jsonObject.get("review_count");
+            int review_count = review_count_long.intValue();
+
+            String photo_url = (String) jsonObject.get("photo_url");
+            JSONArray schools = (JSONArray) jsonObject.get("schools");
+
+            Long price_long = (Long) jsonObject.get("price");
+            int price = price_long.intValue();
+
+            Restaurant newRestaurant = new Restaurant(isopen, url, longitude, latitude, neighborhoods, business_id,
+                    name, categories, state, type, stars, city, full_address, review_count, photo_url, schools, price);
+            restaurants.add(newRestaurant);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
     /**
      * Returns a random review for a given restaurant name. Returns
      * "NO REVIEWS FOUND!" if no reviews were available for the restaurant or if
@@ -212,8 +268,7 @@ public class RestaurantDB {
         }
 
         if (restaurantReviews.size() != 0) {
-            Review randomReview = restaurantReviews.get((int) Math.random() 
-                    * restaurantReviews.size());
+            Review randomReview = restaurantReviews.get((int) Math.random() * restaurantReviews.size());
             return randomReview.getJSONString();
         } else {
             return "NO REVIEWS FOUND!";
@@ -244,15 +299,10 @@ public class RestaurantDB {
 
             // adds the user if the use id doesn't already exist
             if (!userIDExist) {
-                User newUser = new User(
-                        (String) jsonObject.get("url"), 
-                        ((Long) vote.get("cool")).intValue(),
-                        ((Long) vote.get("useful")).intValue(), 
-                        ((Long) vote.get("funny")).intValue(),
-                        ((Long) jsonObject.get("review_count")).intValue(),
-                        (String) jsonObject.get("type"),
-                        (String) jsonObject.get("user_id"), 
-                        (String) jsonObject.get("name"),
+                User newUser = new User((String) jsonObject.get("url"), ((Long) vote.get("cool")).intValue(),
+                        ((Long) vote.get("useful")).intValue(), ((Long) vote.get("funny")).intValue(),
+                        ((Long) jsonObject.get("review_count")).intValue(), (String) jsonObject.get("type"),
+                        (String) jsonObject.get("user_id"), (String) jsonObject.get("name"),
                         (Double) jsonObject.get("average_stars"));
 
                 users.add(newUser);
@@ -286,17 +336,11 @@ public class RestaurantDB {
 
             // adds the review if the review id doesn't already exist
             if (!reviewIDExist) {
-                Review newReview = new Review(
-                        (String) jsonObject.get("type"),
-                        (String) jsonObject.get("business_id"),
-                        ((Long) vote.get("cool")).intValue(),
-                        ((Long) vote.get("useful")).intValue(),
-                        ((Long) vote.get("funny")).intValue(), 
-                        (String) jsonObject.get("review_id"),
-                        (String) jsonObject.get("text"), 
-                        ((Long) jsonObject.get("stars")).intValue(),
-                        (String) jsonObject.get("user_id"), 
-                        (String) jsonObject.get("date"));
+                Review newReview = new Review((String) jsonObject.get("type"), (String) jsonObject.get("business_id"),
+                        ((Long) vote.get("cool")).intValue(), ((Long) vote.get("useful")).intValue(),
+                        ((Long) vote.get("funny")).intValue(), (String) jsonObject.get("review_id"),
+                        (String) jsonObject.get("text"), ((Long) jsonObject.get("stars")).intValue(),
+                        (String) jsonObject.get("user_id"), (String) jsonObject.get("date"));
 
                 reviews.add(newReview);
             }
@@ -463,8 +507,7 @@ public class RestaurantDB {
         public ArrayList<Restaurant> search() {
             ArrayList<Restaurant> searchResult = new ArrayList<>();
             for (Restaurant restaurant : restaurants) {
-                if (leftRange <= restaurant.getprice() 
-                        && restaurant.getprice() <= rightRange) {
+                if (leftRange <= restaurant.getprice() && restaurant.getprice() <= rightRange) {
                     searchResult.add(restaurant);
                 }
             }
@@ -486,8 +529,7 @@ public class RestaurantDB {
         public ArrayList<Restaurant> search() {
             ArrayList<Restaurant> searchResult = new ArrayList<>();
             for (Restaurant restaurant : restaurants) {
-                if (leftRange <= restaurant.getstars() 
-                        && restaurant.getstars() <= rightRange) {
+                if (leftRange <= restaurant.getstars() && restaurant.getstars() <= rightRange) {
                     searchResult.add(restaurant);
                 }
             }
