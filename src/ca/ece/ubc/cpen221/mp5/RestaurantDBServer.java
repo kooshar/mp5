@@ -41,8 +41,13 @@ public class RestaurantDBServer {
             System.exit(-1); 
         }  
         Socket clientSocket = myServerSocket.accept(); 
-        DBqueryThread cliThread = new DBqueryThread(clientSocket,dataBase);
-        cliThread.run(); 
+        while(!clientSocket.isClosed()){
+            DBqueryThread queryThread = new DBqueryThread(clientSocket,dataBase);
+            queryThread.run();
+                        
+        }
+        clientSocket.close();
+        
           
         
 
