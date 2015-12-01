@@ -48,7 +48,7 @@ public class RestaurantDB {
      * @param usersJSONfilename
      *            the filename for the users
      */
-    public void RestaurantDBs(String restaurantJSONfilename, String reviewsJSONfilename, String usersJSONfilename) {
+    public RestaurantDB(String restaurantJSONfilename, String reviewsJSONfilename, String usersJSONfilename) {
         // Read the Restaurant data
         JSONParser restaurantParser = new JSONParser();
         try {
