@@ -29,7 +29,7 @@ public class RestaurantDBServer {
      */
    
    ServerSocket myServerSocket;
-   boolean ServerOn = true;
+   //boolean ServerOn = true;
     public RestaurantDBServer(int port, String restaurantsFile, String reviewsFile, String usersFile) throws IOException {
         dataBase = new RestaurantDB(restaurantsFile, reviewsFile, usersFile);
         try 
@@ -41,7 +41,8 @@ public class RestaurantDBServer {
             System.exit(-1); 
         }  
         Socket clientSocket = myServerSocket.accept(); 
-        while(!clientSocket.isClosed()){
+        while(myServerSocket.accept() != null){
+            clientSocket = myServerSocket.accept();
             DBqueryThread queryThread = new DBqueryThread(clientSocket,dataBase);
             queryThread.run();
                         
@@ -88,6 +89,8 @@ public class RestaurantDBServer {
             dblocal = db;
             BufferedReader inputQuery = new BufferedReader(new InputStreamReader(querySocket.getInputStream()));
             query = inputQuery.readLine();
+            inputQuery.close();
+            
                
             
         }
@@ -101,6 +104,7 @@ public class RestaurantDBServer {
                 for(Restaurant iterator: getQuery){
                     outputQuery.println(iterator.getname());
                 }
+                outputQuery.close();
                 
             } catch (IOException e) {
                 
