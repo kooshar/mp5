@@ -185,6 +185,12 @@ public class RestaurantDB {
         return searchResult;
     }
     
+    public ArrayList<Restaurant> getRestaurants(){
+        ArrayList<Restaurant> restaurants=new ArrayList<>();
+        restaurants.addAll(this.restaurants);
+        
+        return restaurants;
+    }
     /**
      * Returns a random review for a given restaurant name. Returns
      * "NO REVIEWS FOUND!" if no reviews were available for the restaurant or if
