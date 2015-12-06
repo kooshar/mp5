@@ -180,6 +180,18 @@ public class RestaurantDB {
         
         return restaurants;
     }
+    public ArrayList<User> getUsers(){
+        ArrayList<User> users=new ArrayList<>();
+        users.addAll(this.users);
+        
+        return users;
+    }
+    public ArrayList<Review> getReviews(){
+        ArrayList<Review> reviews=new ArrayList<>();
+        reviews.addAll(this.reviews);
+        
+        return reviews;
+    }
 
     /**
      * Finds the restaurant with given businessID returns "NO RESTAURANT FOUND!"
@@ -200,6 +212,16 @@ public class RestaurantDB {
 
         return "NO RESTAURANT FOUND!";
 
+    }
+    public Restaurant getRestaurantObject(String businessId){
+        for (Restaurant restaurantFinder : restaurants) {
+            if (restaurantFinder.getbusiness_id() == businessId)
+                return restaurantFinder;
+
+        }
+
+        return null;
+        
     }
 
     public void addRestaurant(String JSONrestaurant) {

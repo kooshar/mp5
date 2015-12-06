@@ -150,11 +150,60 @@ public class Algorithms {
 
     public static MP5Function getPredictor(User u, RestaurantDB db, MP5Function featureFunction) {
         // TODO: Implement this method
-        return null;
+        String userID = u.getUserID();
+        double x;
+        double y;
+        double sxx = 0;
+        double syy = 0;
+        double sxy = 0;
+        double mean_X;
+        double mean_Y;
+        double b;
+        double a;
+        double r2;
+        ArrayList<Double> X = new ArrayList<Double>();
+        ArrayList<Double> Y = new ArrayList<Double>();
+        
+        for (Review reviews: db.getReviews()){
+            if (reviews.getUserID().equals(userID)){
+                x = featureFunction.f(db.getRestaurantObject(reviews.getBusinessID()),db);
+                y = reviews.getStars();
+                X.add(x);
+                Y.add(y);           
+                
+            }
+        }
+        mean_X = getMean(X);
+        mean_Y = getMean(Y);
+        
+        for (int i = 0; i<X.size();i++){
+            sxx +=sxx + Math.pow(mean_X - X.get(i), 2);
+            syy +=syy + Math.pow(mean_Y - Y.get(i), 2);
+            sxy +=sxy + (mean_X - X.get(i))*(mean_Y - Y.get(i));
+        }
+        b = sxy/sxx;
+        a = mean_Y  - b*mean_X;
+        r2 = Math.pow(sxy, 2)/(sxx*syy);
+        
+        return new FunctionPrediction(a,b,r2);
+        
+        
     }
 
     public static MP5Function getBestPredictor(User u, RestaurantDB db, List<MP5Function> featureFunctionList) {
         // TODO: Implement this method
         return null;
+    }
+    /**
+     * Computes mean of ArrayList
+     * @param ArrayList of doubles
+     * @return mean of the list
+     */
+    public static double getMean(ArrayList<Double> list){
+        double sum = 0;
+        for (Double iter:list){
+            sum += iter;
+        }
+        return sum/list.size();
     }
 }
