@@ -59,27 +59,46 @@ d3.json("voronoi.json", function(data) {
         .enter()
         .append("path")
         .attr("class", "cell")
-        .attr("id", function (d) { return makeValidID(d.name).substr(1); })
+        .attr("id", 
+            function (d, i) {
+               if (d) {
+                   return makeValidID(d.name).substr(1); 
+               } else {
+                   console.warn("path for " + data[i].name + " undefined");
+               }
+            })
         .attr("stroke", "black")
         .style("opacity", fillOpacity)
-        .style("fill", function (d) { return fillColor(d.weight); })
-        .attr("d", function (d) { return "M" + d.join("L") + "Z"; })
+        .style("fill", 
+            function (d) { 
+               if (d) { return fillColor(d.weight); }
+            })
+        .attr("d", 
+            function (d) {
+                if (d) { 
+                    return "M" + d.join("L") + "Z"; 
+                }
+            })
         .on("mouseover", function (d, i) {
-            updateColor(d);
+            if (d) { updateColor(d) };
         })
         .on("mousemove", function(d, i) {
-            tooltip.transition()
-                .duration(100)
-                .style("opacity", 0.9);
-            tooltip.html(d.name + " (" + Math.round(d.weight * 100) / 100 + ")")
-                .style("left", (d3.event.pageX + 5) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+            if (d) {
+                tooltip.transition()
+                    .duration(100)
+                    .style("opacity", 0.9);
+                tooltip.html(d.name + " (" + Math.round(d.weight * 100) / 100 + ")")
+                    .style("left", (d3.event.pageX + 5) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            }
         })
         .on("mouseout", function (d, i) {
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", 0);
-            resetColor(d);
+            if (d) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", 0);
+                resetColor(d);
+            }
         });
 
     svg.selectAll(".dot")

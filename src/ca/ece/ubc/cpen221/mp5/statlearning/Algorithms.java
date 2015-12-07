@@ -151,7 +151,7 @@ public class Algorithms {
                 restaurantInfo.put("y", restaurant.getlatitude());
                 restaurantInfo.put("name", restaurant.getname());
                 restaurantInfo.put("cluster", clusterIndex);
-                restaurantInfo.put("wieght", 1.0);
+                restaurantInfo.put("weight", 4.0);
 
                 allInfo.add(restaurantInfo);
             }
