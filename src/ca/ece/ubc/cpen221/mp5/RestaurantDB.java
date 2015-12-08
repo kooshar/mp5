@@ -141,9 +141,10 @@ public class RestaurantDB {
     }
 
     /**
+     * Returns a set of Restaurant that pass the search given a
+     * query. The grammar of the query is specified in the file Query.g4.
      * 
      * @param queryString
-     * @return
      */
     public Set<Restaurant> query(String queryString) {
         CharStream stream = new ANTLRInputStream(queryString);
@@ -171,13 +172,21 @@ public class RestaurantDB {
         return searchResult;
     }
 
+    /**
+     * Returns an ArrayList of all the restaurants in the database
+     * 
+     */
     public ArrayList<Restaurant> getRestaurants() {
         ArrayList<Restaurant> restaurants = new ArrayList<>();
         restaurants.addAll(this.restaurants);
 
         return restaurants;
     }
-
+    
+    /**
+     * 
+     * Returns an ArrayList of all the users in the database
+     */
     public ArrayList<User> getUsers() {
         ArrayList<User> users = new ArrayList<>();
         users.addAll(this.users);
@@ -185,6 +194,10 @@ public class RestaurantDB {
         return users;
     }
 
+    /**
+     * 
+     * Returns an ArrayList of all the users in the database
+     */
     public ArrayList<Review> getReviews() {
         ArrayList<Review> reviews = new ArrayList<>();
         reviews.addAll(this.reviews);
@@ -193,8 +206,9 @@ public class RestaurantDB {
     }
 
     /**
-     * Finds the restaurant with given businessID returns "NO RESTAURANT FOUND!"
-     * if a restaurant with given businessID isn't found
+     * Returns the name of the restaurant with given businessID. returns
+     * "NO RESTAURANT FOUND!"if a restaurant with given businessID isn't 
+     * found
      * 
      * @param String
      *            businessId
@@ -206,7 +220,6 @@ public class RestaurantDB {
         for (Restaurant restaurantFinder : restaurants) {
             if (restaurantFinder.getbusiness_id().equals(businessId))
                 return restaurantFinder.getname();
-
         }
 
         return "NO RESTAURANT FOUND!";
@@ -214,6 +227,8 @@ public class RestaurantDB {
     }
 
     /**
+     * Returns the restaurant with the businessID. returns NULL if 
+     * the restaurant with given businessID isn't found
      * 
      * @param businessId
      * @return the restaurant object with that businessID
@@ -222,7 +237,6 @@ public class RestaurantDB {
         for (Restaurant restaurantFinder : restaurants) {
             if (restaurantFinder.getbusiness_id().equals(businessId))
                 return restaurantFinder;
-
         }
 
         return null;
@@ -230,8 +244,14 @@ public class RestaurantDB {
     }
 
     /**
+     * Adds a restaurant if the restaurants business id is not in the database.
+     * Returns "RESTAURANT SUCCESSFULLY ADDED" if the restaurant was
+     * successfully added. Returns "RESTAURANT ID ALREADY EXISTS" if the
+     * business id is already in the database. Returns
+     * "OPERATION ENDED WITH AN ERROR" if JSONrestaurant cannot be read.
      * 
      * @param JSONrestaurant
+     *            restaurant full information in JSON format
      */
     public String addRestaurant(String JSONrestaurant) {
         JSONParser addrestaurantParser = new JSONParser();
@@ -275,9 +295,10 @@ public class RestaurantDB {
                 Long price_long = (Long) jsonObject.get("price");
                 int price = price_long.intValue();
 
-                Restaurant newRestaurant = new Restaurant(isopen, url, longitude, latitude, neighborhoods, business_id,
-                        name, categories, state, type, stars, city, full_address, review_count, photo_url, schools,
-                        price);
+                Restaurant newRestaurant = new Restaurant(isopen, url, longitude, latitude,
+                        neighborhoods, business_id, name, categories, state, type, stars,
+                        city, full_address, review_count, photo_url, schools, price);
+                
                 restaurants.add(newRestaurant);
                 return "RESTAURANT SUCCESSFULLY ADDED";
             } else {
@@ -290,9 +311,9 @@ public class RestaurantDB {
     }
 
     /**
-     * Returns a random review for a given restaurant name. Returns
-     * "NO REVIEWS FOUND!" if no reviews were available for the restaurant or if
-     * the restaurant doesn't exist.
+     * Returns a random review in JSON format for a given restaurant name.
+     * Returns "NO REVIEWS FOUND!" if no reviews were available for the
+     * restaurant or if the restaurant doesn't exist.
      * 
      * @param String
      *            restaurantName
@@ -316,7 +337,8 @@ public class RestaurantDB {
         }
 
         if (restaurantReviews.size() != 0) {
-            Review randomReview = restaurantReviews.get((int) Math.random() * restaurantReviews.size());
+            Review randomReview = restaurantReviews.get(
+                    (int) Math.random() * restaurantReviews.size());
             return randomReview.getJSONString();
         } else {
             return "NO REVIEWS FOUND!";
@@ -324,10 +346,13 @@ public class RestaurantDB {
     }
 
     /**
-     * Adds a user to the data set.
+     * Adds a User if the user id is not in the database. Returns
+     * "USER SUCCESSFULLY ADDED" if the user was successfully added. Returns
+     * "USER ID ALREADY EXISTS" if the user id is already in the database.
+     * Returns "OPERATION ENDED WITH AN ERROR" if JSONUser cannot be read.
      * 
      * @param JSONUser
-     *            user information in JSON format
+     *            user full information in JSON format
      */
     public String addUser(String JSONUser) {
         JSONParser userParser = new JSONParser();
@@ -347,10 +372,14 @@ public class RestaurantDB {
 
             // adds the user if the use id doesn't already exist
             if (!userIDExist) {
-                User newUser = new User((String) jsonObject.get("url"), ((Long) vote.get("cool")).intValue(),
-                        ((Long) vote.get("useful")).intValue(), ((Long) vote.get("funny")).intValue(),
-                        ((Long) jsonObject.get("review_count")).intValue(), (String) jsonObject.get("type"),
-                        (String) jsonObject.get("user_id"), (String) jsonObject.get("name"),
+                User newUser = new User((String) jsonObject.get("url"), 
+                        ((Long) vote.get("cool")).intValue(),
+                        ((Long) vote.get("useful")).intValue(),
+                        ((Long) vote.get("funny")).intValue(),
+                        ((Long) jsonObject.get("review_count")).intValue(), 
+                        (String) jsonObject.get("type"),
+                        (String) jsonObject.get("user_id"), 
+                        (String) jsonObject.get("name"),
                         (Double) jsonObject.get("average_stars"));
 
                 users.add(newUser);
@@ -364,10 +393,13 @@ public class RestaurantDB {
     }
 
     /**
-     * Adds a review to the data set.
+     * Adds a Review if the review id is not in the database. Returns
+     * "REVIEW SUCCESSFULLY ADDED" if the review was successfully added. Returns
+     * "REVIEW ID ALREADY EXISTS" if the review id is already in the database.
+     * Returns "OPERATION ENDED WITH AN ERROR" if JSONReview cannot be read.
      * 
      * @param JSONReview
-     *            user information in JSON format
+     *            review full information in JSON format
      */
     public String addReview(String JSONReview) {
         JSONParser reviewParser = new JSONParser();
@@ -387,11 +419,16 @@ public class RestaurantDB {
 
             // adds the review if the review id doesn't already exist
             if (!reviewIDExist) {
-                Review newReview = new Review((String) jsonObject.get("type"), (String) jsonObject.get("business_id"),
-                        ((Long) vote.get("cool")).intValue(), ((Long) vote.get("useful")).intValue(),
-                        ((Long) vote.get("funny")).intValue(), (String) jsonObject.get("review_id"),
-                        (String) jsonObject.get("text"), ((Long) jsonObject.get("stars")).intValue(),
-                        (String) jsonObject.get("user_id"), (String) jsonObject.get("date"));
+                Review newReview = new Review((String) jsonObject.get("type"),
+                        (String) jsonObject.get("business_id"),
+                        ((Long) vote.get("cool")).intValue(), 
+                        ((Long) vote.get("useful")).intValue(),
+                        ((Long) vote.get("funny")).intValue(), 
+                        (String) jsonObject.get("review_id"),
+                        (String) jsonObject.get("text"),
+                        ((Long) jsonObject.get("stars")).intValue(),
+                        (String) jsonObject.get("user_id"), 
+                        (String) jsonObject.get("date"));
 
                 reviews.add(newReview);
                 return "REVIEW SUCCESSFULLY ADDED";

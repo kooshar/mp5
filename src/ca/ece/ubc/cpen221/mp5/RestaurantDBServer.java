@@ -13,19 +13,20 @@ import java.util.Set;
 public class RestaurantDBServer {
 
     public RestaurantDB dataBase;
-    /**
-     * Constructor
-     * 
-     * @param port
-     * @param filename1
-     * @param filename2
-     * @param filename3
-     * 
-     */
-
     ServerSocket myServerSocket;
 
-    // boolean ServerOn = true;
+    /**
+     * initializes and runs a server with the specified port number that has all
+     * the restaurants, reviews, users, in the files restaurantsFile,
+     * reviewsFile,usersFile. And will handle every query send through the
+     * socket
+     * 
+     * @param port
+     * @param restaurantsFile
+     * @param reviewsFile
+     * @param usersFile
+     * @throws IOException
+     */
     public RestaurantDBServer(int port, String restaurantsFile, String reviewsFile, String usersFile)
             throws IOException {
         dataBase = new RestaurantDB(restaurantsFile, reviewsFile, usersFile);
@@ -37,11 +38,11 @@ public class RestaurantDBServer {
         }
 
         /**
-         * Thread Safety:
-         * Multi-threading here is safe since all mutator threads are atomic  
-         * and we decline the possibility of interleaving/deadlock. Further, all threads will
-         * perform the given query search without any issues during concurrency.
-         * Representation exposure is avoided inside the database methods, since no mutable types are returned.         
+         * Thread Safety: Multi-threading here is safe since all mutator threads
+         * are atomic and we decline the possibility of interleaving/deadlock.
+         * Further, all threads will perform the given query search without any
+         * issues during concurrency. Representation exposure is avoided inside
+         * the database methods, since no mutable types are returned.
          * 
          **/
         Socket clientSocket;
@@ -53,6 +54,9 @@ public class RestaurantDBServer {
     }
 }
 
+/*
+ * A helper class that handles each sockets query
+ */
 class DBqueryThread implements Runnable {
 
     private final String randomReview = "randomReview";
@@ -70,37 +74,42 @@ class DBqueryThread implements Runnable {
 
     }
 
+    @Override
     public void run() {
         StringBuffer outputString = new StringBuffer();
         String query = "";
 
-        // get the query
         try {
+            // get the query
             BufferedReader inputQuery = new BufferedReader(new InputStreamReader(querySocket.getInputStream()));
             query = inputQuery.readLine();
-            while(inputQuery.ready()){
-                query+="\n";
-                query+=inputQuery.readLine();
+            while (inputQuery.ready()) {
+                query += "\n";
+                query += inputQuery.readLine();
             }
 
+            //Decides what function the query is referring to. 
+            //Calls the appropriate method and gets the results.
             if (query.contains(randomReview)) {
-                outputString = new StringBuffer(
-                        dblocal.randomReview(query.substring(randomReview.length() + 2, query.length() - 2)));
+                String RestaurantName = query.substring(randomReview.length() + 2, query.length() - 2);
+                outputString = new StringBuffer(dblocal.randomReview(RestaurantName));
+
             } else if (query.contains(getRestaurant)) {
-                outputString = new StringBuffer(
-                        dblocal.getRestaurant(query.substring(getRestaurant.length() + 2, query.length() - 2)));
+                String businessID = query.substring(getRestaurant.length() + 2, query.length() - 2);
+                outputString = new StringBuffer(dblocal.getRestaurant(businessID));
+
             } else if (query.contains(addRestaurant)) {
-                String JSOnstring=query.substring(getRestaurant.length() + 2, query.length() - 2);
+                String JSOnstring = query.substring(getRestaurant.length() + 2, query.length() - 2);
                 outputString = new StringBuffer(dblocal.addRestaurant(JSOnstring));
-                
+
             } else if (query.contains(addUser)) {
-                String JSOnstring=query.substring(addUser.length() + 2, query.length() - 2);
+                String JSOnstring = query.substring(addUser.length() + 2, query.length() - 2);
                 outputString = new StringBuffer(dblocal.addUser(JSOnstring));
-                
+
             } else if (query.contains(addReview)) {
-                String JSOnstring=query.substring(addReview.length() + 2, query.length() - 2);
+                String JSOnstring = query.substring(addReview.length() + 2, query.length() - 2);
                 outputString = new StringBuffer(dblocal.addReview(JSOnstring));
-                
+
             } else {
                 Set<Restaurant> getQuery = new HashSet<Restaurant>();
                 getQuery = dblocal.query(query);
@@ -110,10 +119,11 @@ class DBqueryThread implements Runnable {
                 }
             }
 
-            // find the restaurants if the query was properly received
+            // sends the result back to the socket
             PrintWriter outputQuery = new PrintWriter(new OutputStreamWriter(querySocket.getOutputStream()));
             outputQuery.println(outputString);
-           
+
+            //closes the stream
             outputQuery.close();
             inputQuery.close();
 

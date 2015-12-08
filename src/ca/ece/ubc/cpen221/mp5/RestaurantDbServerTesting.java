@@ -90,8 +90,6 @@ class QuerySender implements Runnable {
             System.out.println(JSONanswer);
             
             answerBuffer.close();
-            
-
         } catch (IOException ioe) {
             System.exit(-1);
         }
