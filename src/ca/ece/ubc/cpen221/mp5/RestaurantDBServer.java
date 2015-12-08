@@ -36,6 +36,14 @@ public class RestaurantDBServer {
             System.exit(-1);
         }
 
+        /**
+         * Thread Safety:
+         * Multi-threading here is safe since all mutator threads are atomic  
+         * and we decline the possibility of interleaving/deadlock. Further, all threads will
+         * perform the given query search without any issues during concurrency.
+         * Representation exposure is avoided inside the database methods, since no mutable types are returned.         
+         * 
+         **/
         Socket clientSocket;
         while ((clientSocket = myServerSocket.accept()) != null) {
             DBqueryThread queryThread = new DBqueryThread(clientSocket, dataBase);
@@ -95,7 +103,6 @@ class DBqueryThread implements Runnable {
                 
             } else {
                 Set<Restaurant> getQuery = new HashSet<Restaurant>();
-                System.out.println(query);
                 getQuery = dblocal.query(query);
 
                 for (Restaurant restaurant : getQuery) {

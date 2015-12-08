@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class RestaurantDbServerTesting {
 
-    static int port = 4987;
+    static int port = 4698;
 
     public static void main(String args[]) throws NumberFormatException, IOException {
         ArrayList<String> queries = new ArrayList<>();
@@ -46,7 +46,8 @@ public class RestaurantDbServerTesting {
                 + " \"CO8LSMeF1cyEno-9vCOipQ\", \"name\": \"EastBayResident S.\", \"average_stars\": 4.16666666666667}\")");
         queries.add("addUser(\"{\"url\": \"http://www.yelp.com/user_details?userid=CO8LSMeF1cyEno-9vCOipQ\", \"votes\""
                 + ": {\"funny\": 1, \"useful\": 5, \"cool\": 1}, \"review_count\": 12, \"type\": \"user\", \"user_id\":"
-                + " \"CO8LSMeF1cyEno-9vCOipQ\", \"name\": \"EastBayResident S.\", \"average_stars\": 4.16666666666667}\")");
+                + " \"newID\", \"name\": \"EastBayResident S.\", \"average_stars\": 4.16666666666667}\")");
+        
 
         Server server = new Server(port);
         new Thread(server).start();
@@ -85,6 +86,8 @@ class QuerySender implements Runnable {
                 JSONanswer+="\n";
                 JSONanswer+=answerBuffer.readLine();
             }
+            
+            System.out.println(JSONanswer);
             
             answerBuffer.close();
             

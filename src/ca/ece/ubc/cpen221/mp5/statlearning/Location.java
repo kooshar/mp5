@@ -3,7 +3,7 @@ package ca.ece.ubc.cpen221.mp5.statlearning;
 import java.util.ArrayList;
 
 public class Location {
-    private final double accuracy=0.000000001;
+    private final double accuracy = 0.000000001;
     private double longitude;
     private double latitude;
 
@@ -12,14 +12,29 @@ public class Location {
         this.latitude = latitude;
     }
 
+    /**
+     * returns the longitude
+     */
     public double getLongitude() {
         return longitude;
     }
 
+    /**
+     * returns the latitude
+     */
     public double getLatitude() {
         return latitude;
     }
 
+    /**
+     * returns a random location where longitudeMax > longitude > longitudeMin
+     * and latitudeMax > latitude > latitudeMin
+     * 
+     * @param longitudeMax
+     * @param longitudeMin
+     * @param latitudeMax
+     * @param latitudeMin
+     */
     public static Location random(double longitudeMax, double longitudeMin, double latitudeMax, double latitudeMin) {
         double longitude = longitudeMin + (longitudeMax - longitudeMin) * Math.random();
         double latitude = latitudeMin + (latitudeMax - latitudeMin) * Math.random();
@@ -32,10 +47,7 @@ public class Location {
      * the startPoint
      * 
      * @param startPoint
-     *            the location of startPoint
      * @param Endpoints
-     *            the ArrayList of endPoints
-     * @return
      */
     public static int closestLocation(Location startPoint, ArrayList<Location> endPoints) {
         double closestDistance = Location.distance(startPoint, endPoints.get(0));
@@ -51,13 +63,10 @@ public class Location {
     }
 
     /**
-     * returns the distance of two location
+     * returns the distance of two location a and b
      * 
      * @param a
-     *            location one
      * @param b
-     *            location 2
-     * @return
      */
     public static double distance(Location a, Location b) {
         return Math.sqrt(
@@ -68,10 +77,8 @@ public class Location {
     public boolean equals(Object o) {
         if (o instanceof Location) {
             Location location = (Location) o;
-            return location.latitude < this.latitude + accuracy 
-                    && location.latitude > this.latitude - accuracy
-                    && location.longitude > this.longitude - accuracy
-                    && location.longitude < this.longitude + accuracy;
+            return location.latitude < this.latitude + accuracy && location.latitude > this.latitude - accuracy
+                    && location.longitude > this.longitude - accuracy && location.longitude < this.longitude + accuracy;
         } else {
             return false;
         }

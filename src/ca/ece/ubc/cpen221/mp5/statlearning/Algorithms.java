@@ -214,29 +214,24 @@ public class Algorithms {
             } else {
                 b = 0;
             }
-            
+
             r2 = 1;
             return new FunctionPrediction(a, b, r2, featureFunction);
-
-        } else{
-            if (sxx ==0||syy==0 ) {
+        } else {
+            if (sxx == 0 || syy == 0) {
                 b = getMean(Y);
                 a = 0;
                 r2 = 0;
 
                 return new FunctionPrediction(a, b, r2, featureFunction);
-            }else{
+            } else {
                 b = sxy / sxx;
-
                 a = mean_Y - b * mean_X;
                 r2 = Math.pow(sxy, 2) / (sxx * syy);
 
                 return new FunctionPrediction(a, b, r2, featureFunction);
             }
-
         }
-            
-
     }
 
     /**
@@ -262,7 +257,6 @@ public class Algorithms {
             if (tempFunction.getR2() > bestFunction.getR2()) {
                 bestFunction = tempFunction;
             }
-
         }
 
         return new FunctionPrediction(bestFunction.geta(), bestFunction.getb(), bestFunction.getR2(),
