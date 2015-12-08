@@ -1,4 +1,5 @@
 package ca.ece.ubc.cpen221.mp5;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,7 +18,7 @@ import java.util.Set;
 
 public class RestaurantDBServer {
 
-   private RestaurantDB dataBase;
+    public RestaurantDB dataBase;
     /**
      * Constructor
      * 
@@ -27,72 +28,81 @@ public class RestaurantDBServer {
      * @param filename3
      * 
      */
-   
-   ServerSocket myServerSocket;
-   //boolean ServerOn = true;
-    public RestaurantDBServer(int port, String restaurantsFile, String reviewsFile, String usersFile) throws IOException {
+
+    ServerSocket myServerSocket;
+
+    // boolean ServerOn = true;
+    public RestaurantDBServer(int port, String restaurantsFile, String reviewsFile, String usersFile)
+            throws IOException {
         dataBase = new RestaurantDB(restaurantsFile, reviewsFile, usersFile);
-        try 
-        { 
+        try {
             myServerSocket = new ServerSocket(port);
-        }catch(IOException ioe) 
-        { 
-            System.out.println("Could not create server socket on port:" + port +  "Quitting"); 
-            System.exit(-1); 
-        }  
-        Socket clientSocket = myServerSocket.accept(); 
-        while(myServerSocket.accept() != null){
-            clientSocket = myServerSocket.accept();
-            DBqueryThread queryThread = new DBqueryThread(clientSocket,dataBase);
-            queryThread.run();
-                        
+        } catch (IOException ioe) {
+            System.out.println("Could not create server socket on port:" + port + "a  Quitting");
+            System.exit(-1);
         }
-        clientSocket.close();
-        
-          
-        
+
+        Socket clientSocket = myServerSocket.accept();
+        // while(myServerSocket.accept() != null){
+        // clientSocket = myServerSocket.accept();
+
+        System.out.println("server got connected to the socket");
+
+        DBqueryThread queryThread = new DBqueryThread(clientSocket, dataBase);
+        new Thread(queryThread).start();
+
+        // }
+        System.out.println("a");
+        // clientSocket.close();
 
     }
- 
 
-    private class DBqueryThread implements Runnable{
-        String query;
+    private class DBqueryThread implements Runnable {
         RestaurantDB dblocal;
-        Set<Restaurant> getQuery  = new HashSet<Restaurant>();
+        Set<Restaurant> getQuery = new HashSet<Restaurant>();
         Socket querySocket;
-        
-        public DBqueryThread(Socket querySocket , RestaurantDB db) throws IOException{
-            
+
+        public DBqueryThread(Socket querySocket, RestaurantDB db) throws IOException {
+
             this.querySocket = querySocket;
             dblocal = db;
-            BufferedReader inputQuery = new BufferedReader(new InputStreamReader(querySocket.getInputStream()));
-            query = inputQuery.readLine();
-            inputQuery.close();
-            
-               
-            
+
         }
-        
 
         public void run() {
-            getQuery = dblocal.query(query);
-          
+            String query = "";
+            BufferedReader inputQuery;
+            
+            //get the query
+            System.out.println("1");
             try {
-                PrintWriter outputQuery = new PrintWriter(new OutputStreamWriter(querySocket.getOutputStream()));
-                
-                for(Restaurant iterator: getQuery){
-                    outputQuery.println(iterator.getname());
-                }
-                outputQuery.close();
-                
-            } catch (IOException e) {
-                
-                e.printStackTrace();
+                inputQuery = new BufferedReader(new InputStreamReader(querySocket.getInputStream()));
+                query = inputQuery.readLine();
+                inputQuery.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
             
+            //find the restaurants if the query was properly received
+            System.out.println("3");
+            if (query.equals("")) {
+                System.out.println("oh shit i didn't pull out");
+            } else {
+                getQuery = dblocal.query(query);
+            }
+            
+            String OutputString="";
+            for (Restaurant iterator : getQuery) {
+                OutputString.concat(iterator.getJSONString());
+            }
+            
+            try {
+                PrintWriter outputQuery = new PrintWriter(new OutputStreamWriter(querySocket.getOutputStream()));
+                outputQuery.write(OutputString);
+                outputQuery.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    
-
     }
-    
 }

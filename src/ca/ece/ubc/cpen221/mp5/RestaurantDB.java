@@ -205,7 +205,7 @@ public class RestaurantDB {
     public String getRestaurant(String businessId) {
 
         for (Restaurant restaurantFinder : restaurants) {
-            if (restaurantFinder.getbusiness_id() == businessId)
+            if (restaurantFinder.getbusiness_id().equals(businessId))
                 return restaurantFinder.getname();
 
         }
@@ -213,9 +213,14 @@ public class RestaurantDB {
         return "NO RESTAURANT FOUND!";
 
     }
+    /**
+     * 
+     * @param businessId
+     * @return the restaurant object with that businessID 
+     */
     public Restaurant getRestaurantObject(String businessId){
         for (Restaurant restaurantFinder : restaurants) {
-            if (restaurantFinder.getbusiness_id() == businessId)
+            if (restaurantFinder.getbusiness_id().equals(businessId))
                 return restaurantFinder;
 
         }
@@ -224,6 +229,10 @@ public class RestaurantDB {
         
     }
 
+    /**
+     * 
+     * @param JSONrestaurant
+     */
     public void addRestaurant(String JSONrestaurant) {
         JSONParser addrestaurantParser = new JSONParser();
         Object obj;
