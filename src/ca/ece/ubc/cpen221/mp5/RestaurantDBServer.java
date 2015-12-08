@@ -46,13 +46,10 @@ public class RestaurantDBServer {
         // while(myServerSocket.accept() != null){
         // clientSocket = myServerSocket.accept();
 
-        System.out.println("server got connected to the socket");
-
         DBqueryThread queryThread = new DBqueryThread(clientSocket, dataBase);
         new Thread(queryThread).start();
 
         // }
-        System.out.println("a");
         // clientSocket.close();
 
     }
@@ -87,7 +84,6 @@ public class RestaurantDBServer {
 
                 try {
                     PrintWriter outputQuery = new PrintWriter(new OutputStreamWriter(querySocket.getOutputStream()));
-                    outputQuery.println(outputString.toString());
                     outputQuery.flush();
                     outputQuery.close();
                     inputQuery.close();
