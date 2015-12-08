@@ -63,7 +63,6 @@ public class RestaurantDBServer {
         Socket querySocket;
 
         public DBqueryThread(Socket querySocket, RestaurantDB db) throws IOException {
-
             this.querySocket = querySocket;
             dblocal = db;
 
@@ -72,37 +71,40 @@ public class RestaurantDBServer {
         public void run() {
             String query = "";
             BufferedReader inputQuery;
-            
-            //get the query
-            System.out.println("1");
+
+            // get the query
             try {
                 inputQuery = new BufferedReader(new InputStreamReader(querySocket.getInputStream()));
                 query = inputQuery.readLine();
-                inputQuery.close();
+
+                // find the restaurants if the query was properly received
+                if (query.equals("")) {
+                    System.out.println("oh shit i didn't pull out");
+                } else {
+
+                    getQuery = dblocal.query(query);
+                }
+
+                StringBuffer outputString = new StringBuffer();
+                for (Restaurant restaurant : getQuery) {
+                    outputString.append(restaurant.getJSONString());
+                }
+
+                System.out.println(outputString);
+                try {
+                    PrintWriter outputQuery = new PrintWriter(new OutputStreamWriter(querySocket.getOutputStream()));
+                    System.out.println("outputString.toString()");
+                    outputQuery.println(outputString.toString());
+                    outputQuery.flush();
+                    outputQuery.close();
+                    inputQuery.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-            
-            //find the restaurants if the query was properly received
-            System.out.println("3");
-            if (query.equals("")) {
-                System.out.println("oh shit i didn't pull out");
-            } else {
-                getQuery = dblocal.query(query);
-            }
-            
-            String OutputString="";
-            for (Restaurant iterator : getQuery) {
-                OutputString.concat(iterator.getJSONString());
-            }
-            
-            try {
-                PrintWriter outputQuery = new PrintWriter(new OutputStreamWriter(querySocket.getOutputStream()));
-                outputQuery.write(OutputString);
-                outputQuery.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
     }
 }

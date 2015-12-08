@@ -18,9 +18,8 @@ public class Testing {
     static int port = 7243;
 
     public static void main(String args[]) throws NumberFormatException, IOException {
-        String query1 = "in(\"Telegraph Ave\") && (category(\"Chinese\")";
+        String query1 = "in(\"Telegraph Ave\")";
 
-        
         Servermaina server = new Servermaina(2);
         new Thread(server).start();
 
@@ -30,23 +29,21 @@ public class Testing {
         // String query= br.readLine();
 
         try {
-            
             toServer = new Socket("localhost", port);
-            System.out.println("Successfully connected to port:" + port);
         } catch (IOException ioe) {
-            System.out.println("Could not create client socket on port:" + port + "  Quitting");
             System.exit(-1);
         }
+        
         PrintWriter out = new PrintWriter(toServer.getOutputStream());
-        out.write(query1);
-        System.out.println("Sent query1");
-        BufferedReader in = new BufferedReader(new InputStreamReader(toServer.getInputStream()));
+        out.println(query1);
+        out.flush();
+        System.out.print("Sent query1");
 
-        String response = in.readLine();
-        System.out.println(response);
-        in.close();
+        BufferedReader answerBuffer = new BufferedReader(new InputStreamReader(toServer.getInputStream()));
+        String JSONanswer = answerBuffer.readLine();
+        answerBuffer.close();
+
         out.close();
-
         toServer.close();
         /**
          * String Json =
