@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class RestaurantDbServerTesting {
 
-    static int port = 4698;
+    static int port = 4695;
 
     public static void main(String args[]) throws NumberFormatException, IOException {
         ArrayList<String> queries = new ArrayList<>();
