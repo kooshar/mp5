@@ -20,7 +20,6 @@ public class Algorithms {
      * @return List of Sets of Restaurant clusters
      */
     public static List<Set<Restaurant>> kMeansClustering(int k, RestaurantDB db) {
-        // TODO: Implement this method
         ArrayList<Restaurant> restaurants = db.getRestaurants();
         ArrayList<Location> clusterLoc = randomClusterLocation(k, restaurants);
 
@@ -147,8 +146,8 @@ public class Algorithms {
         for (Set<Restaurant> cluster : clusters) {
             for (Restaurant restaurant : cluster) {
                 JSONObject restaurantInfo = new JSONObject();
-                restaurantInfo.put("x", restaurant.getlongitude());
-                restaurantInfo.put("y", restaurant.getlatitude());
+                restaurantInfo.put("x", restaurant.getlatitude());
+                restaurantInfo.put("y", restaurant.getlongitude());
                 restaurantInfo.put("name", restaurant.getname());
                 restaurantInfo.put("cluster", clusterIndex);
                 restaurantInfo.put("weight", 4.0);
@@ -231,7 +230,6 @@ public class Algorithms {
      * @return MP5Function with highest r-squared value
      */
     public static MP5Function getBestPredictor(User u, RestaurantDB db, List<MP5Function> featureFunctionList) {
-        double bestR2 = 0;
         // double tempR2;
         FunctionPrediction bestFunction = (FunctionPrediction) getPredictor(u, db, featureFunctionList.get(0));
         FunctionPrediction tempFunction;

@@ -42,22 +42,24 @@ public class RestaurantDBServer {
             System.exit(-1);
         }
 
-        
-        Socket clientSocket = myServerSocket.accept();
-  
-
-        DBqueryThread queryThread = new DBqueryThread(clientSocket, dataBase);
-        new Thread(queryThread).start();
-
-        
-        // clientSocket.close();
+        Socket clientSocket;
+        while ((clientSocket = myServerSocket.accept()) != null) {
+            DBqueryThread queryThread = new DBqueryThread(clientSocket, dataBase);
+            new Thread(queryThread).start();
+        }
 
     }
 
     private class DBqueryThread implements Runnable {
-        RestaurantDB dblocal;
-        Set<Restaurant> getQuery = new HashSet<Restaurant>();
-        Socket querySocket;
+
+        private final String randomReview = "randomReview";
+        private final String getRestaurant = "getRestaurant";
+        private final String addRestaurant = "addRestaurant";
+        private final String addUser = "addUser";
+        private final String addReview = "addReview";
+
+        private RestaurantDB dblocal;
+        private Socket querySocket;
 
         public DBqueryThread(Socket querySocket, RestaurantDB db) throws IOException {
             this.querySocket = querySocket;
@@ -66,21 +68,39 @@ public class RestaurantDBServer {
         }
 
         public void run() {
+            StringBuffer outputString = new StringBuffer();
             String query = "";
-            BufferedReader inputQuery;
 
             // get the query
             try {
-                inputQuery = new BufferedReader(new InputStreamReader(querySocket.getInputStream()));
+                BufferedReader inputQuery = new BufferedReader(new InputStreamReader(querySocket.getInputStream()));
                 query = inputQuery.readLine();
 
-                // find the restaurants if the query was properly received
-                getQuery = dblocal.query(query);
+                if (query.contains(randomReview)) {
+                    outputString = new StringBuffer(
+                            dblocal.randomReview(query.substring(randomReview.length() + 2, query.length() - 2)));
+                } else if (query.contains(getRestaurant)) {
+                    outputString = new StringBuffer(
+                            dblocal.getRestaurant(query.substring(getRestaurant.length() + 2, query.length() - 2)));
+                } else if (query.contains(addRestaurant)) {
+                    outputString = new StringBuffer(
+                            dblocal.addRestaurant(query.substring(getRestaurant.length() + 2, query.length() - 2)));
+               } else if (query.contains(addUser)) {
+                    outputString = new StringBuffer(
+                            dblocal.addUser(query.substring(addUser.length() + 2, query.length() - 2)));
+               } else if (query.contains(addReview)) {
+                    outputString = new StringBuffer(
+                            dblocal.addReview(query.substring(addReview.length() + 2, query.length() - 2)));
+                } else {
+                    Set<Restaurant> getQuery = new HashSet<Restaurant>();
+                    getQuery = dblocal.query(query);
 
-                StringBuffer outputString = new StringBuffer();
-                for (Restaurant restaurant : getQuery) {
-                    outputString.append(restaurant.getJSONString());
+                    for (Restaurant restaurant : getQuery) {
+                        outputString.append(restaurant.getJSONString());
+                    }
                 }
+
+                // find the restaurants if the query was properly received
 
                 try {
                     PrintWriter outputQuery = new PrintWriter(new OutputStreamWriter(querySocket.getOutputStream()));

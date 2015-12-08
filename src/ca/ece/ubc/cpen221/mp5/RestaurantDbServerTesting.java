@@ -1,19 +1,12 @@
-package ca.ece.ubc.cpen221.mp5.statlearning;
+package ca.ece.ubc.cpen221.mp5;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 
-import org.omg.CORBA.portable.OutputStream;
-
-import ca.ece.ubc.cpen221.mp5.RestaurantDB;
-import ca.ece.ubc.cpen221.mp5.RestaurantDBServer;
-
-public class Testing {
+public class RestaurantDbServerTesting {
     public static Socket toServer;
     static int port = 1546;
 
@@ -47,8 +40,7 @@ public class Testing {
         @Override
         public void run() {
             try {
-                RestaurantDBServer dbserver = new RestaurantDBServer(port, "data/restaurants.json", "data/reviews.json",
-                        "data/users.json");
+                new RestaurantDBServer(port, "data/restaurants.json", "data/reviews.json", "data/users.json");
             } catch (IOException e) {
 
             }

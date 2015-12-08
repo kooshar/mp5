@@ -173,23 +173,25 @@ public class RestaurantDB {
 
         return searchResult;
     }
-    
-    public ArrayList<Restaurant> getRestaurants(){
-        ArrayList<Restaurant> restaurants=new ArrayList<>();
+
+    public ArrayList<Restaurant> getRestaurants() {
+        ArrayList<Restaurant> restaurants = new ArrayList<>();
         restaurants.addAll(this.restaurants);
-        
+
         return restaurants;
     }
-    public ArrayList<User> getUsers(){
-        ArrayList<User> users=new ArrayList<>();
+
+    public ArrayList<User> getUsers() {
+        ArrayList<User> users = new ArrayList<>();
         users.addAll(this.users);
-        
+
         return users;
     }
-    public ArrayList<Review> getReviews(){
-        ArrayList<Review> reviews=new ArrayList<>();
+
+    public ArrayList<Review> getReviews() {
+        ArrayList<Review> reviews = new ArrayList<>();
         reviews.addAll(this.reviews);
-        
+
         return reviews;
     }
 
@@ -213,12 +215,13 @@ public class RestaurantDB {
         return "NO RESTAURANT FOUND!";
 
     }
+
     /**
      * 
      * @param businessId
-     * @return the restaurant object with that businessID 
+     * @return the restaurant object with that businessID
      */
-    public Restaurant getRestaurantObject(String businessId){
+    public Restaurant getRestaurantObject(String businessId) {
         for (Restaurant restaurantFinder : restaurants) {
             if (restaurantFinder.getbusiness_id().equals(businessId))
                 return restaurantFinder;
@@ -226,14 +229,14 @@ public class RestaurantDB {
         }
 
         return null;
-        
+
     }
 
     /**
      * 
      * @param JSONrestaurant
      */
-    public void addRestaurant(String JSONrestaurant) {
+    public String addRestaurant(String JSONrestaurant) {
         JSONParser addrestaurantParser = new JSONParser();
         Object obj;
         try {
@@ -241,37 +244,50 @@ public class RestaurantDB {
 
             JSONObject jsonObject = (JSONObject) obj;
 
-            boolean isopen = (Boolean) jsonObject.get("open");
-            String name = (String) jsonObject.get("name");
-            String city = (String) jsonObject.get("city");
-            JSONArray categories = (JSONArray) jsonObject.get("categories");
+            boolean restaurantIDExist = false;
+            for (Restaurant restaurant : restaurants) {
+                if (restaurant.getbusiness_id().equals((String) jsonObject.get("user_id"))) {
+                    restaurantIDExist = true;
+                    break;
+                }
+            }
 
-            String url = (String) jsonObject.get("url");
+            if (!restaurantIDExist) {
+                boolean isopen = (Boolean) jsonObject.get("open");
+                String name = (String) jsonObject.get("name");
+                String city = (String) jsonObject.get("city");
+                JSONArray categories = (JSONArray) jsonObject.get("categories");
 
-            double longitude = (Double) jsonObject.get("longitude");
-            double latitude = (Double) jsonObject.get("latitude");
-            JSONArray neighborhoods = (JSONArray) jsonObject.get("neighborhoods");
-            String business_id = (String) jsonObject.get("business_id");
-            String state = (String) jsonObject.get("state");
-            String type = (String) jsonObject.get("type");
-            double stars = (Double) jsonObject.get("stars");
-            String full_address = (String) jsonObject.get("full_address");
+                String url = (String) jsonObject.get("url");
 
-            Long review_count_long = (Long) jsonObject.get("review_count");
-            int review_count = review_count_long.intValue();
+                double longitude = (Double) jsonObject.get("longitude");
+                double latitude = (Double) jsonObject.get("latitude");
+                JSONArray neighborhoods = (JSONArray) jsonObject.get("neighborhoods");
+                String business_id = (String) jsonObject.get("business_id");
+                String state = (String) jsonObject.get("state");
+                String type = (String) jsonObject.get("type");
+                double stars = (Double) jsonObject.get("stars");
+                String full_address = (String) jsonObject.get("full_address");
 
-            String photo_url = (String) jsonObject.get("photo_url");
-            JSONArray schools = (JSONArray) jsonObject.get("schools");
+                Long review_count_long = (Long) jsonObject.get("review_count");
+                int review_count = review_count_long.intValue();
 
-            Long price_long = (Long) jsonObject.get("price");
-            int price = price_long.intValue();
+                String photo_url = (String) jsonObject.get("photo_url");
+                JSONArray schools = (JSONArray) jsonObject.get("schools");
 
-            Restaurant newRestaurant = new Restaurant(isopen, url, longitude, latitude, neighborhoods, business_id,
-                    name, categories, state, type, stars, city, full_address, review_count, photo_url, schools, price);
-            restaurants.add(newRestaurant);
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+                Long price_long = (Long) jsonObject.get("price");
+                int price = price_long.intValue();
+
+                Restaurant newRestaurant = new Restaurant(isopen, url, longitude, latitude, neighborhoods, business_id,
+                        name, categories, state, type, stars, city, full_address, review_count, photo_url, schools,
+                        price);
+                restaurants.add(newRestaurant);
+                return "RESTAURANT SUCCESSFULLY ADDED";
+            } else {
+                return "RESTAURANT ALREADY EXISTS";
+            }
+        } catch (Exception e) {
+            return "OPERATION ENDED WITH AN ERROR";
         }
 
     }
@@ -316,7 +332,7 @@ public class RestaurantDB {
      * @param JSONUser
      *            user information in JSON format
      */
-    public void addUser(String JSONUser) {
+    public String addUser(String JSONUser) {
         JSONParser userParser = new JSONParser();
         try {
             Object obj = userParser.parse(JSONUser);
@@ -341,9 +357,12 @@ public class RestaurantDB {
                         (Double) jsonObject.get("average_stars"));
 
                 users.add(newUser);
+                return "USER SUCCESSFULLY ADDED";
+            } else {
+                return "USER ALREADY EXISTS";
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "OPERATION ENDED WITH AN ERROR";
         }
     }
 
@@ -353,7 +372,7 @@ public class RestaurantDB {
      * @param JSONReview
      *            user information in JSON format
      */
-    public void addReview(String JSONReview) {
+    public String addReview(String JSONReview) {
         JSONParser reviewParser = new JSONParser();
         try {
             Object obj = reviewParser.parse(JSONReview);
@@ -378,9 +397,12 @@ public class RestaurantDB {
                         (String) jsonObject.get("user_id"), (String) jsonObject.get("date"));
 
                 reviews.add(newReview);
+                return "REVIEW SUCCESSFULLY ADDED";
+            } else {
+                return "REVIEW ALREADY EXISTS";
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "OPERATION ENDED WITH AN ERROR";
         }
     }
 
