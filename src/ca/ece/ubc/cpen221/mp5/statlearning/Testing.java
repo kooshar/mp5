@@ -15,7 +15,7 @@ import ca.ece.ubc.cpen221.mp5.RestaurantDBServer;
 
 public class Testing {
     public static Socket toServer;
-    static int port = 7243;
+    static int port = 1546;
 
     public static void main(String args[]) throws NumberFormatException, IOException {
         String query1 = "in(\"Telegraph Ave\")";
@@ -37,6 +37,7 @@ public class Testing {
         String JSONanswer = answerBuffer.readLine();
         answerBuffer.close();
 
+        System.out.println(JSONanswer);
         out.close();
         toServer.close();
     }
