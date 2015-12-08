@@ -10,6 +10,7 @@ import java.util.Stack;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -17,7 +18,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 // TODO: This class represents the Restaurant Database.
 // Define the internal representation and 
@@ -146,9 +146,6 @@ public class RestaurantDB {
      * @return
      */
     public Set<Restaurant> query(String queryString) {
-        // TODO: Implement this method
-        // Write specs, etc.
-
         CharStream stream = new ANTLRInputStream(queryString);
         QueryLexer lexer = new QueryLexer(stream);
         lexer.reportErrorsAsExceptions();
@@ -160,7 +157,7 @@ public class RestaurantDB {
 
         // Generate the parse tree using the starter rule.
         ParseTree tree = parser.orExpr();
-        // ((RuleContext)tree).inspect(parser);
+        ((RuleContext) tree).inspect(parser);
 
         // Finally, construct a Document value by walking over the parse tree.
         ParseTreeWalker walker = new ParseTreeWalker();
@@ -246,7 +243,7 @@ public class RestaurantDB {
 
             boolean restaurantIDExist = false;
             for (Restaurant restaurant : restaurants) {
-                if (restaurant.getbusiness_id().equals((String) jsonObject.get("user_id"))) {
+                if (restaurant.getbusiness_id().equals((String) jsonObject.get("business_id"))) {
                     restaurantIDExist = true;
                     break;
                 }
@@ -284,7 +281,7 @@ public class RestaurantDB {
                 restaurants.add(newRestaurant);
                 return "RESTAURANT SUCCESSFULLY ADDED";
             } else {
-                return "RESTAURANT ALREADY EXISTS";
+                return "RESTAURANT ID ALREADY EXISTS";
             }
         } catch (Exception e) {
             return "OPERATION ENDED WITH AN ERROR";
@@ -359,7 +356,7 @@ public class RestaurantDB {
                 users.add(newUser);
                 return "USER SUCCESSFULLY ADDED";
             } else {
-                return "USER ALREADY EXISTS";
+                return "USER ID ALREADY EXISTS";
             }
         } catch (Exception e) {
             return "OPERATION ENDED WITH AN ERROR";
@@ -399,7 +396,7 @@ public class RestaurantDB {
                 reviews.add(newReview);
                 return "REVIEW SUCCESSFULLY ADDED";
             } else {
-                return "REVIEW ALREADY EXISTS";
+                return "REVIEW ID ALREADY EXISTS";
             }
         } catch (Exception e) {
             return "OPERATION ENDED WITH AN ERROR";

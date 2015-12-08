@@ -1,4 +1,4 @@
-// Generated from d:/Users/koosha/workspace/mp5/src/ca/ece/ubc/cpen221/mp5/Query.g4 by ANTLR 4.4
+// Generated from Query.g4 by ANTLR 4.4
 
 package ca.ece.ubc.cpen221.mp5;
 

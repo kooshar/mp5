@@ -27,7 +27,7 @@ public class FunctionPrediction implements MP5Function{
      */
     public double f(Restaurant yelpRestaurant, RestaurantDB db) {
         predictX = featureFunction.f(yelpRestaurant, db);
-        return (a*predictX + b);
+        return (b*predictX + a);
     }
    
     

@@ -206,15 +206,36 @@ public class Algorithms {
         }
 
         // if only one rating is given, linear function has 0 slope
-        if (Y.size() == 0) {
-            b = 0;
-        } else
-            b = sxy / sxx;
+        if (Y.size() < 2) {
+            a = 0;
+            if (Y.size() == 1) {
+                b = Y.get(0);// if one point is given, produce horizontal line
+                             // at the rating
+            } else {
+                b = 0;
+            }
+            
+            r2 = 1;
+            return new FunctionPrediction(a, b, r2, featureFunction);
 
-        a = mean_Y - b * mean_X;
-        r2 = Math.pow(sxy, 2) / (sxx * syy);
+        } else{
+            if (sxx ==0||syy==0 ) {
+                b = getMean(Y);
+                a = 0;
+                r2 = 0;
 
-        return new FunctionPrediction(a, b, r2, featureFunction);
+                return new FunctionPrediction(a, b, r2, featureFunction);
+            }else{
+                b = sxy / sxx;
+
+                a = mean_Y - b * mean_X;
+                r2 = Math.pow(sxy, 2) / (sxx * syy);
+
+                return new FunctionPrediction(a, b, r2, featureFunction);
+            }
+
+        }
+            
 
     }
 
