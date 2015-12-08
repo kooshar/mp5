@@ -34,7 +34,7 @@ public class RestaurantDBServer {
         dataBase = new RestaurantDB(restaurantsFile, reviewsFile, usersFile);
         try 
         { 
-            myServerSocket = new ServerSocket(port); 
+            myServerSocket = new ServerSocket(port);
         }catch(IOException ioe) 
         { 
             System.out.println("Could not create server socket on port:" + port +  "Quitting"); 
@@ -53,29 +53,7 @@ public class RestaurantDBServer {
         
 
     }
-    
-    
-/**
-    
-    public static void main(String[] args) throws Exception {
-        Thread[] queries = new Thread[args.length];
-        for (int i = 0; i<queries.length;i++){
-            queries[i] = new Thread(new DBquery(args[i],dataBase));
-            
-            
-            
-        }
-        
-        
-        
-        
-    }
-    
-     **/
-   
-    
-    
-    
+ 
 
     private class DBqueryThread implements Runnable{
         String query;
@@ -98,6 +76,7 @@ public class RestaurantDBServer {
 
         public void run() {
             getQuery = dblocal.query(query);
+          
             try {
                 PrintWriter outputQuery = new PrintWriter(new OutputStreamWriter(querySocket.getOutputStream()));
                 
