@@ -20,24 +20,18 @@ public class Testing {
     public static void main(String args[]) throws NumberFormatException, IOException {
         String query1 = "in(\"Telegraph Ave\")";
 
-        Servermaina server = new Servermaina(2);
+        Servermaina server = new Servermaina();
         new Thread(server).start();
-
-        System.out.println("please enter query:");
-        // BufferedReader br= new BufferedReader(new
-        // InputStreamReader(System.in));
-        // String query= br.readLine();
 
         try {
             toServer = new Socket("localhost", port);
         } catch (IOException ioe) {
             System.exit(-1);
         }
-        
+
         PrintWriter out = new PrintWriter(toServer.getOutputStream());
         out.println(query1);
         out.flush();
-        System.out.print("Sent query1");
 
         BufferedReader answerBuffer = new BufferedReader(new InputStreamReader(toServer.getInputStream()));
         String JSONanswer = answerBuffer.readLine();
@@ -45,22 +39,9 @@ public class Testing {
 
         out.close();
         toServer.close();
-        /**
-         * String Json =
-         * Algorithms.convertClustersToJSON(Algorithms.kMeansClustering(10,
-         * db));
-         * 
-         * PrintWriter writer = new PrintWriter("visualize\\voronoi.json");
-         * writer.print(Json); writer.close();
-         **/
-
     }
 
     private static class Servermaina implements Runnable {
-
-        public Servermaina(int i) {
-
-        }
 
         @Override
         public void run() {

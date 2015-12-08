@@ -78,22 +78,15 @@ public class RestaurantDBServer {
                 query = inputQuery.readLine();
 
                 // find the restaurants if the query was properly received
-                if (query.equals("")) {
-                    System.out.println("oh shit i didn't pull out");
-                } else {
-
-                    getQuery = dblocal.query(query);
-                }
+                getQuery = dblocal.query(query);
 
                 StringBuffer outputString = new StringBuffer();
                 for (Restaurant restaurant : getQuery) {
                     outputString.append(restaurant.getJSONString());
                 }
 
-                System.out.println(outputString);
                 try {
                     PrintWriter outputQuery = new PrintWriter(new OutputStreamWriter(querySocket.getOutputStream()));
-                    System.out.println("outputString.toString()");
                     outputQuery.println(outputString.toString());
                     outputQuery.flush();
                     outputQuery.close();
